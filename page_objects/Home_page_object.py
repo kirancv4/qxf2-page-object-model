@@ -67,12 +67,11 @@ class Home_page_object(Base_Page):
     def get_result(self):
         "get the result of total Number of words and characters" 
         wordcount = self.get_text(self.word_count_result_wordcount)
-        a=int(wordcount.split("'")[1])
         charcount = self.get_text(self.word_count_result_charcount)
-        b=int(charcount.split("'")[1])
-        print (a,b)
+        #wordcount = wordcount.split("'")[1]
+        #charcount = charcount.split("'")[1]
         if (wordcount is not None) and  (charcount is not None):
-            self.write("The word count is %d and character count is %d"(a,b),level="debug")
+            self.write("The word count is {0} and character count is {1}".format(wordcount,charcount),level="debug")
             result_flag = True
         else:
             result_flag = False
