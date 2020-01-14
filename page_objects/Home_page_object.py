@@ -20,6 +20,7 @@ class Home_page_object(Base_Page):
     word_count_result_wordcount=locators.word_count_result_wordcount
     word_count_result_charcount=locators.word_count_result_charcount
     
+    
     @Wrapit._exceptionHandler
     @Wrapit._screenshot
     def word_count_click(self):
@@ -64,18 +65,27 @@ class Home_page_object(Base_Page):
 
     @Wrapit._exceptionHandler
     @Wrapit._screenshot
-    def get_result(self):
+    def get_result(self,sample_word_count,sample_char_count):
         "get the result of total Number of words and characters" 
-        wordcount = self.get_text(self.word_count_result_wordcount)
-        charcount = self.get_text(self.word_count_result_charcount)
-        #wordcount = wordcount.split("'")[1]
-        #charcount = charcount.split("'")[1]
+        wordcount = self.get_text(self.word_count_result_wordcount) #Getting the wordcount
+        charcount = self.get_text(self.word_count_result_charcount) #Getting the charcount
+        wordcount = int(wordcount)                                  #Conversion of unicode to int    
+        charcount = int(charcount)                                  #conversion of unicode to int
+        #print (wordcount, charcount)
+
         if (wordcount is not None) and  (charcount is not None):
-            self.write("The word count is {0} and character count is {1}".format(wordcount,charcount),level="debug")
-            result_flag = True
+            self.write("The word count is {} and character count is {}".format(wordcount,charcount))
+            if (wordcount==sample_word_count ) and (charcount==sample_char_count):
+                result_flag = True
         else:
             result_flag = False
         self.conditional_write(result_flag,
-        positive="Automation was able to fetch the word and character count",
+        positive="Automation was able to fetch the word and character count and both are same",
         negative="Automation was not able to fetch the word and character count")
         return result_flag
+
+
+    
+
+
+    
