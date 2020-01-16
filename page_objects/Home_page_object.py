@@ -19,6 +19,7 @@ class Home_page_object(Base_Page):
     word_count_button=locators.word_count_button
     word_count_result_wordcount=locators.word_count_result_wordcount
     word_count_result_charcount=locators.word_count_result_charcount
+    #word_count_result=locators.word_count_result
     
     
     @Wrapit._exceptionHandler
@@ -42,8 +43,9 @@ class Home_page_object(Base_Page):
         negative="Automation is not able to locate the Frame Title.")
         return result_flag
 
-    @Wrapit._screenshot
+   
     @Wrapit._exceptionHandler
+    @Wrapit._screenshot
     def input_sample_text(self,word_count_textarea):
         "set sample text in the textarea"
         result_flag = self.set_text(self.word_count_textarea,word_count_textarea)
@@ -66,13 +68,11 @@ class Home_page_object(Base_Page):
     @Wrapit._exceptionHandler
     @Wrapit._screenshot
     def get_result(self,sample_word_count,sample_char_count):
-        "get the result of total Number of words and characters" 
+        "get the result of total Number of words and characters and compare with sample." 
         wordcount = self.get_text(self.word_count_result_wordcount) #Getting the wordcount
         charcount = self.get_text(self.word_count_result_charcount) #Getting the charcount
         wordcount = int(wordcount)                                  #Conversion of unicode to int    
         charcount = int(charcount)                                  #conversion of unicode to int
-        #print (wordcount, charcount)
-
         if (wordcount is not None) and  (charcount is not None):
             self.write("The word count is {} and character count is {}".format(wordcount,charcount))
             if (wordcount==sample_word_count ) and (charcount==sample_char_count):
