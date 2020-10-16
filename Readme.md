@@ -143,11 +143,11 @@ a)py.test [options]
 	-U  	used to run against specific URL				E.g: python -m pytest -U http://YOUR_localhost_URL (This will run against your local instance)
 	-M  	used to run tests on Browserstack/Sauce Lab			E.g: python -m pytest -s -M Y -U https://qxf2.com	
 	-B all	used to run the test against multiple browser 			E.g:python -m pytest -B all(This will run each test against the list of browsers specified in the conftest.py file,firefox and chrome in our case)
-	-V/-O	used to run against different browser versions/os versions	E.g: python -m pytest -V 44 -O 8 (This will run each test 4 times in different browser version(default=45 & 44) and OS(default=7 & 8) combination)
+	--ver/-O	used to run against different browser versions/os versions	E.g: python -m pytest --ver 44 -O 8 (This will run each test 4 times in different browser version(default=45 & 44) and OS(default=7 & 8) combination)
 	-h	help for more options 						E.g: python -m pytest -h
 	-k      used to run tests which match the given substring expresion 	E.g: python -m pytest -k table  (This will trigger test_example_table.py test)
-	-S	used to post pytest reports on the Slack channel		E.g: python -m pytest -S Y -v > log/pytest_report.log
-	-n 	used to run tests in parallel					E.g: python -m pytest -n 3 -v (This will run three tests in parallel)
+	-S	used to post pytest reports on the Slack channel		E.g: python -m pytest -S Y -ver > log/pytest_report.log
+	-n 	used to run tests in parallel					E.g: python -m pytest -n 3 --ver (This will run three tests in parallel)
 	--tesults 	used to report test results to tesults			E.g: python -m pytest test_example_form.py --tesults Y(This will report test report to tesults)
 
 b)python tests/test_example_form.py (can also be used to run standalone test) 	
