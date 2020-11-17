@@ -2,26 +2,19 @@
 A wrapper around Requests to make Restful API calls
 """
 
-import json
 import requests
-from requests.auth import HTTPBasicAuth
 from urllib.error import HTTPError
 from urllib.error import URLError
-from conf import api_example_conf as conf
 
 class Base_API:
     "Main base class for Requests based scripts"
 
-    def __init__(self, url=None):
-        pass
-
-
     def get(self, url, headers={}):
         "Get request"
-        json_response = None 
+        json_response = None
         error = {}
         try:
-            response = requests.get(url=url,headers=headers)
+            response = self.request_obj.get(url=url,headers=headers)
             try:
                 json_response = response.json()
             except:
@@ -38,7 +31,10 @@ class Base_API:
             else:
                 print(e.reason.args)
                 # bubble error back up after printing relevant details
-                raise e # We raise error only when unknown errors occurs (other than HTTP error and url open error 10061) 
+                raise e # We raise error only when unknown errors occurs (other than HTTP error and url open error 10061)
+        except Exception as e:
+            print("Python says:%s" % str(e))
+            json_response = None
 
         return {'response': response.status_code,'text':response.text,'json_response':json_response, 'error': error}
 
@@ -48,7 +44,7 @@ class Base_API:
         error = {}
         json_response = None
         try:
-            response = requests.post(url,params=params,json=json,headers=headers)
+            response = self.request_obj.post(url,params=params,json=json,headers=headers)
             try:
                 json_response = response.json()
             except:
@@ -65,21 +61,24 @@ class Base_API:
                 print(e.reason.args)
                 # bubble error back up after printing relevant details
             raise e
+        except Exception as e:
+            print("Python says:%s" % str(e))
+            json_response = None
 
         return {'response': response.status_code,'text':response.text,'json_response':json_response, 'error': error}
 
-    
+
     def delete(self, url,headers={}):
         "Delete request"
         response = False
         error = {}
         try:
-            response = requests.delete(url,headers = headers)
+            response = self.request_obj.delete(url,headers = headers)
             try:
                 json_response = response.json()
             except:
                 json_response = None
-        
+
         except (HTTPError,URLError) as e:
             error = e
             if isinstance(e,HTTPError):
@@ -92,6 +91,9 @@ class Base_API:
                 print(str(e.reason.args))
             # bubble error back up after printing relevant details
             raise e
+        except Exception as e:
+            print("Python says:%s" % str(e))
+            json_response = None
 
         return {'response': response.status_code,'text':response.text,'json_response':json_response, 'error': error}
 
@@ -101,7 +103,7 @@ class Base_API:
         error = {}
         response = False
         try:
-            response = requests.put(url,json=json,headers=headers)
+            response = self.request_obj.put(url,json=json,headers=headers)
             try:
                 json_response = response.json()
             except:
@@ -120,6 +122,8 @@ class Base_API:
                 print(str(e.reason.args))
             # bubble error back up after printing relevant details
             raise e
+        except Exception as e:
+            print("Python says:%s" % str(e))
+            json_response = None
 
         return {'response': response.status_code,'text':response.text,'json_response':json_response, 'error': error}
-

@@ -1,27 +1,29 @@
 """
 TestRail integration:
 * limited to what we need at this time
-* we assume TestRail operates in single suite mode 
+* we assume TestRail operates in single suite mode
   i.e., the default, reccomended mode
 
 API reference: http://docs.gurock.com/testrail-api2/start
 """
-import dotenv,os,sys
+import os,sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from utils import testrail
 import conf.testrailenv_conf as conf_file
 
 class Test_Rail:
     "Wrapper around TestRail's API"
+    # Added below to fix PytestCollectionWarning
+    __test__ = False
 
-    def __init__(self):        
+    def __init__(self):
         "Initialize the TestRail objects"
         self.set_testrail_conf()
 
 
     def set_testrail_conf(self):
         "Set the TestRail URL and username, password"
-  
+
         #Set the TestRail URL
         self.testrail_url = conf_file.testrail_url
         self.client = testrail.APIClient(self.testrail_url)
@@ -36,7 +38,7 @@ class Test_Rail:
         project_id=None
         projects = self.client.send_get('get_projects')
         for project in projects:
-            if project['name'] == project_name: 
+            if project['name'] == project_name:
                 project_id = project['id']
                 break
         return project_id
@@ -75,7 +77,7 @@ class Test_Rail:
                 user_id = user['id']
                 break
         return user_id
-        
+
 
     def get_run_id(self,project_name,test_run_name):
         "Get the run ID using test name and project name"
@@ -92,7 +94,7 @@ class Test_Rail:
                  if test_run['name'] == test_run_name:
                      run_id = test_run['id']
                      break
-        
+
         return run_id
 
 
@@ -105,7 +107,7 @@ class Test_Rail:
                 try:
                     data = {'name':milestone_name,
                             'description':milestone_description}
-                    result = self.client.send_post('add_milestone/%s'%str(project_id),
+                    self.client.send_post('add_milestone/%s'%str(project_id),
                                                    data)
                 except Exception as e:
                     print('Exception in create_new_project() creating new project.')
@@ -122,7 +124,7 @@ class Test_Rail:
         project_id = self.get_project_id(new_project_name)
         if project_id is None:
             try:
-                result = self.client.send_post('add_project',
+                self.client.send_post('add_project',
                                                {'name': new_project_name,
                                                 'announcement': project_description,
                                                 'show_announcement': show_announcement,
@@ -161,7 +163,7 @@ class Test_Rail:
                 data['include_all'] = False
 
             try:
-                result = self.client.send_post('add_run/%s'%(project_id),data)
+                self.client.send_post('add_run/%s'%(project_id),data)
             except Exception as e:
                 print('Exception in create_test_run() Creating Test Run.')
                 print('PYTHON SAYS: ')
@@ -173,28 +175,28 @@ class Test_Rail:
                 print("Cannot add test run %s because Project %s was not found"%(test_run_name,project_name))
             elif test_run_id is not None:
                 print("Test run '%s' already exists"%test_run_name)
-            
+
 
     def delete_project(self,new_project_name,project_description):
         "Delete an existing project"
         project_id = self.get_project_id(new_project_name)
         if project_id is not None:
             try:
-                result = self.client.send_post('delete_project/%s'%(project_id),project_description)
+                self.client.send_post('delete_project/%s'%(project_id),project_description)
             except Exception as e:
                 print('Exception in delete_project() deleting project.')
                 print('PYTHON SAYS: ')
                 print(e)
         else:
             print('Cant delete the project given project name: %s'%(new_project_name))
-    
+
 
     def delete_test_run(self,test_run_name,project_name):
         "Delete an existing test run"
         run_id = self.get_run_id(test_run_name,project_name)
         if run_id is not None:
             try:
-                result = self.client.send_post('delete_run/%s'%(run_id),test_run_name)
+                self.client.send_post('delete_run/%s'%(run_id),test_run_name)
             except Exception as e:
                 print('Exception in update_testrail() updating TestRail.')
                 print('PYTHON SAYS: ')
@@ -207,22 +209,21 @@ class Test_Rail:
         "Update TestRail for a given run_id and case_id"
         update_flag = False
 
-        #Update the result in TestRail using send_post function. 
-        #Parameters for add_result_for_case is the combination of runid and case id. 
+        #Update the result in TestRail using send_post function.
+        #Parameters for add_result_for_case is the combination of runid and case id.
         #status_id is 1 for Passed, 2 For Blocked, 4 for Retest and 5 for Failed
         status_id = 1 if result_flag is True else 5
 
         if ((run_id is not None) and (case_id != 'None')) :
             try:
-                result = self.client.send_post(
+                self.client.send_post(
                     'add_result_for_case/%s/%s'%(run_id,case_id),
                     {'status_id': status_id, 'comment': msg })
-                print (result)
             except Exception as e:
                 print('Exception in update_testrail() updating TestRail.')
                 print('PYTHON SAYS: ')
                 print(e)
             else:
                 print('Updated test result for case: %s in test run: %s\n'%(case_id,run_id))
-    
+
         return update_flag
